@@ -4,7 +4,7 @@
 typedef struct Node{
     struct Node* right;
     struct Node* left;
-    int number;
+    unsigned int number;
 }node;
 
 typedef struct{
@@ -16,7 +16,7 @@ void initTree(tree* T){
     T->root = NULL;
 }
 
-node* insertHelp(node* c,int number){
+node* insertHelp(node* c,unsigned int number){
     if(c == NULL){
         c = (node*)malloc(sizeof(node));
         c->number = number;
@@ -33,7 +33,7 @@ node* insertHelp(node* c,int number){
               no tiene ninguna direccion guardada por tanto si yo le asigno memoria a esa copia la voy a perder,por ello retorno y asigno el puntero  */
 }
 
-void insert(tree* T,int number){
+void insert(tree* T,unsigned int number){
     T->root = insertHelp(T->root,number);
 }
 
@@ -50,24 +50,20 @@ void deleteTree(tree* T){
     deleteHelp(T->root);
 }
 
-void sucesorHelp(node* c, int max, int number){
+void sucesorHelp(node* c,unsigned int max,unsigned int number){
     if(c == NULL){
         printf("%d\n",max);
     }
-    else if(c->number > number){
-        if(c->left == NULL || c->left->number < number){
-            printf("%d\n",c->number);
-        }
-        else{
-            sucesorHelp(c->left,max,number);
-        }
+    else if(c->number > number && c->number < max){
+        max = c->number;
+        sucesorHelp(c->left,max,number);
     }
     else{
         sucesorHelp(c->right,max,number);
     }
 }
 
-void sucesor(tree* T,int max,int number){
+void sucesor(tree* T,unsigned int max,unsigned int number){
     sucesorHelp(T->root,max,number);
 }
 
@@ -83,4 +79,47 @@ void preorderHelp(node*c){
 void preorder(tree* T){
     preorderHelp(T->root);
     printf("\n");
+}
+
+node* predecesor(node* c,node* initNode){
+    if(c->right == NULL){
+        initNode->number = c->number;
+        node* aux = c->left;
+        free((void*)c);
+        return aux;
+    }
+    c->right = predecesor(c->right,initNode);
+    return c;
+}
+
+
+node* deleteNode(node* c,unsigned int number){
+    if(c == NULL){
+        return NULL;
+    }
+    if(c->number > number){
+        c->left = deleteNode(c->left,number);
+    }
+    else if(c->number == number){
+        if(c->left == NULL && c->right == NULL){
+            free((void*)c);
+            c = NULL;
+        }
+        else if(c->left != NULL && c->right != NULL){
+            c->left = predecesor(c->left,c);
+        }
+        else{
+             node* aux = (c->left == NULL)? c->right : c->left;
+            free((void*)c);
+            c = aux;
+        }
+    }
+    else{
+        c->right = deleteNode(c->right,number);
+    }
+    return c;
+}
+
+void delete(tree* T,unsigned int number){
+    T->root = deleteNode(T->root,number);
 }
