@@ -106,10 +106,10 @@ node* deleteNode(node* c,unsigned int number){
             c = NULL;
         }
         else if(c->left != NULL && c->right != NULL){
-            c->left = predecesor(c->left,c);
+            c->left = predecesor(c->left,c); //Esto me retorna el nodo de la izquierda,pero si es que corresponde,con sus punteros modificados
         }
         else{
-             node* aux = (c->left == NULL)? c->right : c->left;
+            node* aux = (c->left == NULL)? c->right : c->left;
             free((void*)c);
             c = aux;
         }
