@@ -29,6 +29,11 @@ int main(){
             case 'P':   fseek(input,8,SEEK_CUR);
                         preorder(&T);
                         break;
+
+            case 'B':   fseek(input,6,SEEK_CUR);
+                        fscanf(input,"%d ",&number);
+                        delete(&T,number);
+                        break;
         }
     }
     fclose(input);
